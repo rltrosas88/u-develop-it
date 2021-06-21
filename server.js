@@ -33,7 +33,11 @@ const db = mysql.createConnection(
 //     console.log(rows);
 // });
 app.get('/api/candidates', (req, res) => {
-    const sql = `SELECT * FROM candidates`;
+    const sql = `SELECT candidates.*, parties.name 
+             AS party_name 
+             FROM candidates 
+             LEFT JOIN parties 
+             ON candidates.party_id = parties.id`;
   
     db.query(sql, (err, rows) => {
       if (err) {
@@ -56,7 +60,12 @@ app.get('/api/candidates', (req, res) => {
 //   });
 app.get('/api/candidate/:id', (req, res) => {
     //id is to specify which candidate we'll select from the database
-    const sql = `SELECT * FROM candidates WHERE id = ?`;
+    const sql = `SELECT candidates.*, parties.name 
+             AS party_name 
+             FROM candidates 
+             LEFT JOIN parties 
+             ON candidates.party_id = parties.id 
+             WHERE candidates.id = ?`;
     const params = [req.params.id];
   
     //the database call will query the candidates table with id and retrieve the row specified
