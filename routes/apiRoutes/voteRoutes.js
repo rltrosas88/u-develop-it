@@ -5,12 +5,13 @@ const inputCheck = require('../../utils/inputCheck');
 
 
 router.get('/votes', (req, res) => {
-    const sql = `SELECT candidates.*, parties.name 
-        AS party_name, COUNT(candidate_id) AS count
-        FROM votes 
-        LEFT JOIN candidates ON votes.candidate_id = candidates.id 
-        LEFT JOIN parties ON candidates.party_id = parties.id 
-        GROUP BY candidate_id ORDER BY count DESC`;
+    const sql = `SELECT candidates.*, parties.name AS party_name, 
+                    COUNT(candidate_id) 
+                    AS count FROM votes 
+                    LEFT JOIN candidates ON votes.candidate_id = candidates.id 
+                    LEFT JOIN parties ON candidates.party_id = parties.id 
+                    GROUP BY candidate_id 
+                    ORDER BY count DESC`;
   
     db.query(sql, (err, rows) => {
         if (err) {
@@ -24,6 +25,7 @@ router.get('/votes', (req, res) => {
     });
 });
 
+//create a vote record
 router.post('/vote', ({ body }, res) => {
     // Data validation
     const errors = inputCheck(body, 'voter_id', 'candidate_id');

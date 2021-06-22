@@ -6,6 +6,7 @@ const db = require('../../db/connection');
 //originally app.get('/api/parties', (req, res) => {
 router.get('/parties', (req, res) => {
     const sql = `SELECT * FROM parties`;
+    
     db.query(sql, (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
