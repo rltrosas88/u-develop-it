@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../db/connection');
 const inputCheck = require('../../utils/inputCheck');
 
-//request a list of all potential candidates
+//Get all candidates and their party affiliation
 // db.query(`SELECT * FROM candidates`, (err, rows) => {
 //     console.log(rows);
 // });
@@ -16,18 +16,18 @@ router.get('/candidates', (req, res) => {
              ON candidates.party_id = parties.id`;
   
     db.query(sql, (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.json({
-        message: 'success',
-        data: rows
-      });
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: rows
+        });
     });
 });
 
-// GET a single candidate
+// GET a single candidate with party affiliation
 // db.query(`SELECT * FROM candidates WHERE id = 1`, (err, row) => {
 //     if (err) {
 //       console.log(err);
@@ -66,15 +66,25 @@ router.get('/candidate/:id', (req, res) => {
 //use { body } to populate the data
 // originally app.post('/api/candidate')
 router.post('/candidate', ({ body }, res) => {
-    const errors = inputCheck(body, 'first_name', 'last_name', 'industry_connected');
+    const errors = inputCheck(
+        body, 
+        'first_name', 
+        'last_name', 
+        'industry_connected'
+    );
     if (errors) {
       res.status(400).json({ error: errors });
       return;
     }
-    const sql = `INSERT INTO candidates (first_name, last_name, industry_connected)
+    const sql = `INSERT INTO candidates (first_name, last_name, industry_connected, party_id)
     VALUES (?,?,?)`;
     //contains the user data collected in req.body
-    const params = [body.first_name, body.last_name, body.industry_connected];
+    const params = [
+        body.first_name, 
+        body.last_name, 
+        body.industry_connected,
+        body.party_id
+    ];
 
     db.query(sql, params, (err, result) => {
         if (err) {
@@ -100,6 +110,7 @@ router.put('/candidate/:id', (req, res) => {
     const sql = `UPDATE candidates SET party_id = ? 
                  WHERE id = ?`;
     const params = [req.body.party_id, req.params.id];
+    
     db.query(sql, params, (err, result) => {
         if (err) {
             res.status(400).json({ error: err.message });

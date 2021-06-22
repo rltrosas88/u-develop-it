@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../db/connection');
 const inputCheck = require('../../utils/inputCheck');
 
-//perform the SELECT * FROM voters and return success or 500 status if there were errors
+//Get all voters alphabetized by last name
 router.get('/voters', (req, res) => {
     //rows can be sorted on retrieval by including ORDER BY
         //if you want to sort the data in descending order, add DSC keyword (e.g., ORDER BY last_name DESC)
@@ -61,7 +61,7 @@ router.post('/voter', ({ body }, res) => {
     });
 });
 
-//So users can update their email address
+//Update a voter's email
 router.put('/voter/:id', (req, res) => {
     // Data validation
     const errors = inputCheck(req.body, 'email');
